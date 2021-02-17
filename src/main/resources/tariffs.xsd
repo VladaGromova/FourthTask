@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        targetNamespace="http://www.example.com/tariffs"
+        xmlns:tns="http://www.example.com/tariffs" elementFormDefault="qualified">
+    <element name="tariff" type="tns:Tariff" abstract="true"/>
+    <element name="pensioner-tariff" type="tns:PensionerTariff" substitutionGroup="tns:tariff"/>
+    <element name="student-tariff" type="tns:StudentTariff" substitutionGroup="tns:tariff"/>
+    <element name="tariffs">
+        <complexType>
+        <sequence>
+            <element name="pensioner-tariff" type="tns:PensionerTariff" minOccurs="2" maxOccurs="unbounded"/>
+            <element name="student-tariff" type="tns:StudentTariff" minOccurs="2" maxOccurs="unbounded"/>
+        </sequence>
+        </complexType>
+    </element>
+    <complexType name="CallPrices">
+        <sequence>
+            <element name="in-network" type="positiveInteger"/>
+            <element name="out-network" type="positiveInteger"/>
+            <element name="stationary" type="positiveInteger"/>
+        </sequence>
+    </complexType>
+    <complexType name="Parameters">
+        <sequence>
+            <element name="number-of-favourites" type="positiveInteger"/>
+            <element name="payment" type="positiveInteger"/>
+        </sequence>
+        <attribute name="tariffication" use="optional" default="12seconds">
+            <simpleType>
+                <restriction base="string">
+                    <enumeration value="12seconds"/>
+                    <enumeration value="1minute"/>
+                </restriction>
+            </simpleType>
+        </attribute>
+    </complexType>
+    <complexType name="Tariff" abstract="true">
+        <sequence>
+            <element name="name" type="string"/>
+            <element name="payroll" type="positiveInteger"/>
+            <element name="call-prices" type="tns:CallPrices"/>
+            <element name="sms-price" type="positiveInteger"/>
+            <element name="parameters" type="tns:Parameters"/>
+        </sequence>
+        <attribute name="operator-name" use="required">
+            <simpleType>
+                <restriction base="string">
+                    <enumeration value="MTS"/>
+                    <enumeration value="A"/>
+                    <enumeration value="LIFE"/>
+                </restriction>
+            </simpleType>
+        </attribute>
+    </complexType>
+    <simpleType name="Login">
+        <restriction base="ID">
+            <pattern value="([a-zA-Z])[a-zA-Z0-9]{7,19}"/>
+        </restriction>
+    </simpleType>
+    <complexType name="StudentTariff">
+        <complexContent>
+            <extension base="tns:Tariff">
+                <attribute name="login" type="tns:Login" use="required"/>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="PensionerTariff">
+        <complexContent>
+            <extension base="tns:Tariff">
+                <sequence>
+                    <element name="discount-percent" type="positiveInteger"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+</schema>
