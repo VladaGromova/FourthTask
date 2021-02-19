@@ -8,7 +8,7 @@ import java.util.Objects;
 public class Login {
 
     @XmlAttribute(name = "login")
-    private String login="";
+    private String login;
 
     public Login() {}
 
