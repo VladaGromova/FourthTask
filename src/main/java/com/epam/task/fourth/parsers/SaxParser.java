@@ -13,7 +13,7 @@ import java.util.List;
 public class SaxParser implements Parser {
 
     private final static String EXCEPTION_MESSAGE= "PARSING EXCEPTION";
-    private final static String SUCCESS_PARSE_INFO = "XML is parsed using DOM parser";
+    private final static String SUCCESS_PARSE_INFO = "XML is parsed using SAX parser";
     private final static Logger LOGGER = Logger.getLogger(SaxParser.class);
 
     public SaxParser(){
