@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlType;
 import java.util.Objects;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "CallPrices", propOrder = {"inNetwork", "outNetwork", "stationary"})
+@XmlType(name = "CallPrices")
 public class CallPrices {
     @XmlElement(required = true, name = "in-network")
     private int inNetwork;

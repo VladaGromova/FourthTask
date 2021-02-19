@@ -29,15 +29,11 @@ public class DomParser implements Parser {
     private final static Logger LOGGER = Logger.getLogger(DomParser.class);
 
     public DomParser(){
-        this.tariffs = new ArrayList<>();
-        try {
-            initializeDocumentBuilder();
-        } catch (ParserException e) {
-            LOGGER.error(EXCEPTION_MESSAGE, e);
-        }
     }
 
     public List<Tariff> parse(String filename) throws ParserException {
+        tariffs = new ArrayList<>();
+        initializeDocumentBuilder();
         Document document;
         try {
             document = documentBuilder.parse(filename);

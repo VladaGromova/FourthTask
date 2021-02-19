@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.Objects;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "StudentTariff", propOrder = {"login"})
+@XmlType(name = "StudentTariff")
 public class StudentTariff extends Tariff{
     @XmlID
     @XmlJavaTypeAdapter(IDAdapter.class)

@@ -21,15 +21,13 @@ public class TariffsHandler extends DefaultHandler {
     private final static String PARAMETERS = "parameters";
     private final static String DASH = "-";
     private static final String EMPTY_STRING = "";
-    private List<Tariff> tariffs;
+    private List<Tariff> tariffs = new ArrayList<>();
     private Tariff currentTariff;
     private TariffsEnum currentEnum;
 
     private final static Logger LOGGER = Logger.getLogger(TariffsHandler.class);
 
-    public TariffsHandler() {
-        tariffs = new ArrayList<>();
-    }
+    public TariffsHandler() {}
 
     public List<Tariff> getTariffs() {
         return tariffs;

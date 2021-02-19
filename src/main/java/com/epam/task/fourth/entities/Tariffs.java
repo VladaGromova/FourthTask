@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {"tariff"})
+@XmlType(name = "")
 @XmlRootElement(name="tariffs", namespace = "http://www.example.com/tariffs")
 public class Tariffs {
     @XmlElementRef(name = "tariff", namespace = "http://www.example.com/tariffs", type = JAXBElement.class)

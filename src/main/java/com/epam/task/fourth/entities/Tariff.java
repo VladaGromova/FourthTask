@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.*;
 import java.util.Objects;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Tariff", propOrder = {"name", "payroll", "callPrices","smsPrice","parameters"})
+@XmlType(name = "Tariff")
 @XmlSeeAlso({StudentTariff.class, PensionerTariff.class})
 @XmlRootElement
 public class Tariff {

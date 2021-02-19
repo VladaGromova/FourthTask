@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.Objects;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Parameters", propOrder = {"numberOfFavourites", "payment", "tariffication"})
+@XmlType(name = "Parameters")
 public class Parameters {
     @XmlElement(required = true, name = "number-of-favourites")
     private int numberOfFavourites;

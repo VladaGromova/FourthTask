@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.*;
 import java.util.Objects;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "PensionerTariff", propOrder = {"discountPercent"})
+@XmlType(name = "PensionerTariff")
 public class PensionerTariff extends Tariff{
     @XmlElement(name = "discount-percent")
     private int discountPercent;

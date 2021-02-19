@@ -4,7 +4,7 @@ import javax.xml.bind.annotation.*;
 import java.util.Objects;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Login", propOrder = {"login"})
+@XmlType(name = "Login")
 public class Login {
 
     @XmlAttribute(name = "login")

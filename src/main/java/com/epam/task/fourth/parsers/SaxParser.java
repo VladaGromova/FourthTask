@@ -14,20 +14,16 @@ public class SaxParser implements Parser {
 
     private final static String EXCEPTION_MESSAGE= "PARSING EXCEPTION";
     private List<Tariff> tariffs;
-    private final TariffsHandler handler;
+    private TariffsHandler handler;
     private XMLReader reader;
     private final static Logger LOGGER = Logger.getLogger(SaxParser.class);
 
     public SaxParser(){
-        handler = new TariffsHandler();
-        try {
-            initializeReader();
-        } catch (ParserException e) {
-            LOGGER.error(EXCEPTION_MESSAGE, e);
-        }
     }
 
     public List<Tariff> parse(String filename) throws ParserException {
+        handler = new TariffsHandler();
+        initializeReader();
         try {
             reader.parse(filename);
         } catch (IOException | SAXException e) {
