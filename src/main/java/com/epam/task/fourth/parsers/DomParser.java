@@ -23,8 +23,8 @@ public class DomParser implements Parser {
     private final static String EXCEPTION_MESSAGE = "Parser Exception";
     private final static String PENSIONER_TARIFF = "pensioner-tariff";
     private final static String STUDENT_TARIFF = "student-tariff";
+    private final static String SUCCESS_PARSE_INFO = "XML is parsed using DOM parser";
     private List<Tariff> tariffs;
-    private DocumentBuilder documentBuilder;
 
     private final static Logger LOGGER = Logger.getLogger(DomParser.class);
 
@@ -33,26 +33,20 @@ public class DomParser implements Parser {
 
     public List<Tariff> parse(String filename) throws ParserException {
         tariffs = new ArrayList<>();
-        initializeDocumentBuilder();
-        Document document;
+        DocumentBuilder documentBuilder;
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         try {
+            documentBuilder = factory.newDocumentBuilder();
+            Document document;
             document = documentBuilder.parse(filename);
             Element root = document.getDocumentElement();
             process(root, PENSIONER_TARIFF);
             process(root, STUDENT_TARIFF);
-        } catch (SAXException | IOException e) {
+        } catch (SAXException | IOException | ParserConfigurationException e) {
             throw new ParserException(EXCEPTION_MESSAGE, e);
         }
+        LOGGER.info(SUCCESS_PARSE_INFO);
         return tariffs;
-    }
-
-    private void initializeDocumentBuilder() throws ParserException {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        try {
-            documentBuilder = factory.newDocumentBuilder();
-        } catch (ParserConfigurationException e) {
-            throw new ParserException(EXCEPTION_MESSAGE, e);
-        }
     }
 
     private void process(Element root, String tariffType) {

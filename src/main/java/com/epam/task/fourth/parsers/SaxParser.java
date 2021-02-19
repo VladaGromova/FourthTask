@@ -13,33 +13,24 @@ import java.util.List;
 public class SaxParser implements Parser {
 
     private final static String EXCEPTION_MESSAGE= "PARSING EXCEPTION";
-    private List<Tariff> tariffs;
-    private TariffsHandler handler;
-    private XMLReader reader;
+    private final static String SUCCESS_PARSE_INFO = "XML is parsed using DOM parser";
     private final static Logger LOGGER = Logger.getLogger(SaxParser.class);
 
     public SaxParser(){
     }
 
     public List<Tariff> parse(String filename) throws ParserException {
-        handler = new TariffsHandler();
-        initializeReader();
+        TariffsHandler handler = new TariffsHandler();
+        XMLReader reader;
         try {
+            reader = XMLReaderFactory.createXMLReader();
+            reader.setContentHandler(handler);
             reader.parse(filename);
         } catch (IOException | SAXException e) {
             throw new ParserException(EXCEPTION_MESSAGE, e);
         }
-        tariffs = handler.getTariffs();
-        return tariffs;
-    }
-
-    private void initializeReader() throws ParserException {
-        try {
-            reader = XMLReaderFactory.createXMLReader();
-            reader.setContentHandler(handler);
-        } catch (SAXException e) {
-            throw new ParserException(EXCEPTION_MESSAGE, e);
-        }
+        LOGGER.info(SUCCESS_PARSE_INFO);
+        return handler.getTariffs();
     }
 
 }
