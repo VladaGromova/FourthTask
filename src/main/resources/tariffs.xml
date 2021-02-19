@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<tariffs xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://www.example.com/tariffs"
+         xsi:schemaLocation="http://www.example.com/tariffs tariffs.xsd">
+    <pensioner-tariff operator-name="MTS">
+        <name>SixtyPlus</name>
+        <payroll>60</payroll>
+        <call-prices>
+            <in-network>1</in-network>
+            <out-network>3</out-network>
+            <stationary>3</stationary>
+        </call-prices>
+        <sms-price>2</sms-price>
+        <parameters>
+            <number-of-favourites>5</number-of-favourites>
+            <payment>20</payment>
+        </parameters>
+        <discount-percent>3</discount-percent>
+    </pensioner-tariff>
+    <pensioner-tariff operator-name="LIFE">
+        <name>LifeStartsNow</name>
+        <payroll>40</payroll>
+        <call-prices>
+            <in-network>4</in-network>
+            <out-network>4</out-network>
+            <stationary>4</stationary>
+        </call-prices>
+        <sms-price>2</sms-price>
+        <parameters tariffication="1minute">
+            <number-of-favourites>4</number-of-favourites>
+            <payment>14</payment>
+        </parameters>
+        <discount-percent>4</discount-percent>
+    </pensioner-tariff>
+    <student-tariff operator-name="MTS" login="RayJohn7">
+        <name>Chill</name>
+        <payroll>70</payroll>
+        <call-prices>
+            <in-network>1</in-network>
+            <out-network>2</out-network>
+            <stationary>3</stationary>
+        </call-prices>
+        <sms-price>4</sms-price>
+        <parameters tariffication="12seconds">
+            <number-of-favourites>10</number-of-favourites>
+            <payment>15</payment>
+        </parameters>
+    </student-tariff>
+    <student-tariff operator-name="A" login="MullerAlex7">
+        <name>StudyEasy</name>
+        <payroll>50</payroll>
+        <call-prices>
+            <in-network>2</in-network>
+            <out-network>2</out-network>
+            <stationary>2</stationary>
+        </call-prices>
+        <sms-price>1</sms-price>
+        <parameters tariffication="1minute">
+            <number-of-favourites>3</number-of-favourites>
+            <payment>25</payment>
+        </parameters>
+    </student-tariff>
+</tariffs>
