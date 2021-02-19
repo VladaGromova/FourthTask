@@ -1,16 +1,14 @@
 package com.epam.task.fourth.entities;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.*;
+import java.util.Objects;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Login", propOrder = {"login"})
 public class Login {
-    private final static String PATTERN="([a-zA-Z])[a-zA-Z0-9]{7,19}";
-    @XmlID
-    private String login;
+
+    @XmlAttribute(name = "login")
+    private String login="";
 
     public Login() {}
 
@@ -24,5 +22,22 @@ public class Login {
 
     public String getLogin() {
         return login;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
+        if (object == null || getClass() != object.getClass()){
+            return false;
+        }
+        Login that = (Login) object;
+        return that.login.equals(login);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(login);
     }
 }

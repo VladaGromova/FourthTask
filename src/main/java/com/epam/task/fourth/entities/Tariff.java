@@ -1,22 +1,26 @@
 package com.epam.task.fourth.entities;
 
+import com.epam.task.fourth.enums.Operator;
+
 import javax.xml.bind.annotation.*;
+import java.util.Objects;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Tariff", propOrder = {"name", "payroll", "callPrices","smsPrice","parameters"})
 @XmlSeeAlso({StudentTariff.class, PensionerTariff.class})
+@XmlRootElement
 public class Tariff {
     @XmlElement(required = true)
     private String name;
     @XmlElement(required = true)
     private int payroll;
-    @XmlElement(required = true)
+    @XmlElement(required = true, name = "call-prices")
     private CallPrices callPrices;
-    @XmlElement(required = true)
+    @XmlElement(required = true, name = "sms-price")
     private int smsPrice;
     @XmlElement(required = true)
     private Parameters parameters;
-    @XmlAttribute(required = true)
+    @XmlAttribute(required = true, name = "operator-name")
     private Operator operator;
 
     public Tariff(String name, int payroll, CallPrices callPrices, int smsPrice, Parameters parameters, Operator operator) {
@@ -59,7 +63,6 @@ public class Tariff {
     }
 
     public void createParameter(){
-
         if (parameters == null) {
             parameters = new Parameters();
         }
@@ -70,6 +73,7 @@ public class Tariff {
     }
 
     public Parameters getParameters() {
+        createParameter();
         return parameters;
     }
 
@@ -87,6 +91,23 @@ public class Tariff {
 
     public Operator getOperator() {
         return operator;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object){
+            return true;
+        }
+        if (object == null || getClass() != object.getClass()){
+            return false;
+        }
+        Tariff tariff = (Tariff) object;
+        return name.equals(tariff.name) && payroll == tariff.payroll && smsPrice == tariff.smsPrice && Objects.equals(callPrices, tariff.callPrices) && Objects.equals(parameters, tariff.parameters) && operator == tariff.operator;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, payroll, callPrices, smsPrice, parameters, operator);
     }
 
     @Override

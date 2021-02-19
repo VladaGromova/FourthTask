@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<tariffs xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.example.com/tariffs" xsi:schemaLocation="http://www.example.com/tariffs tariffs.xsd">
+<tariffs xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://www.example.com/tariffs"
+         xsi:schemaLocation="http://www.example.com/tariffs tariffs.xsd">
     <pensioner-tariff operator-name="MTS">
         <name>SixtyPlus</name>
         <payroll>60</payroll>

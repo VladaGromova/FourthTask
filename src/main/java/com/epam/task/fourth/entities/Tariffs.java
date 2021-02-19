@@ -7,24 +7,36 @@ import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {"tariff"})
-@XmlRootElement(name="tariffs")
+@XmlRootElement(name="tariffs", namespace = "http://www.example.com/tariffs")
 public class Tariffs {
+    @XmlElementRef(name = "tariff", namespace = "http://www.example.com/tariffs", type = JAXBElement.class)
     protected List<JAXBElement<? extends Tariff>> tariff;
+
+    public Tariffs(){
+        super();
+    }
 
     public List<JAXBElement<? extends Tariff>> getTariff() {
         if(tariff==null){
-            tariff = new ArrayList<JAXBElement<? extends Tariff>>();
+            tariff = new ArrayList<>();
         }
-        return this.tariff;
+        return tariff;
+    }
+
+    public List<Tariff> getTariffsAsList(){
+        List<Tariff> result = new ArrayList<>();
+        for (JAXBElement<? extends Tariff> jaxbElement : tariff) {
+            result.add(jaxbElement.getValue());
+        }
+        return result;
     }
 
     @Override
     public String toString() {
+        String result = "";
         for (JAXBElement<? extends Tariff> jaxbElement : tariff) {
-            System.out.println(jaxbElement.getDeclaredType());
+            result += jaxbElement.getValue();
         }
-        return "Tariffs{" +
-                "tariff=" + tariff +
-                '}';
+        return result;
     }
 }

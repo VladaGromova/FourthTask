@@ -1,4 +1,4 @@
-package com.epam.task.fourth;
+package com.epam.task.fourth.enums;
 
 public enum TariffsEnum {
     TARIFFS("tariffs"),
@@ -20,8 +20,8 @@ public enum TariffsEnum {
     PAYMENT("payment"),
     DISCOUNTPERCENT("discount-percent");
 
-    private String value;
-    private TariffsEnum(String value){
+    private final String value;
+    TariffsEnum(String value){
         this.value=value;
     }
     public String getValue(){

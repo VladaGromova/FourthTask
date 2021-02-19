@@ -1,11 +1,11 @@
-package com.epam.task.fourth.entities;
+package com.epam.task.fourth.enums;
 
 public enum Tariffication {
     TWELVESECONDS("12seconds"),
     ONEMINUTE("1minute");
 
-    private String value;
-    private Tariffication(String value){
+    private final String value;
+    Tariffication(String value){
         this.value=value;
     }
     public String getValue(){

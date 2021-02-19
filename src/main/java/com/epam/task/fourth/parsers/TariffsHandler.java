@@ -1,16 +1,14 @@
 package com.epam.task.fourth.parsers;
 
-import com.epam.task.fourth.TariffsEnum;
-import com.epam.task.fourth.entities.Operator;
-import com.epam.task.fourth.entities.PensionerTariff;
-import com.epam.task.fourth.entities.StudentTariff;
-import com.epam.task.fourth.entities.Tariff;
+import com.epam.task.fourth.enums.Operator;
+import com.epam.task.fourth.enums.Tariffication;
+import com.epam.task.fourth.enums.TariffsEnum;
+import com.epam.task.fourth.entities.*;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
 
 public class TariffsHandler extends DefaultHandler {
@@ -18,17 +16,19 @@ public class TariffsHandler extends DefaultHandler {
     private final static String REGEX = "[\\-\\s]";
     private final static String PENSIONER_TARIFF = "pensioner-tariff";
     private final static String STUDENT_TARIFF = "student-tariff";
-    private final static String EXCEPTION_MESSAGE = "Parser Exception";
+    private final static String START_MESSAGE = "Parsing started.";
+    private final static String FINISH_MESSAGE = "Parsing finished.";
+    private final static String PARAMETERS = "parameters";
+    private final static String DASH = "-";
+    private static final String EMPTY_STRING = "";
     private List<Tariff> tariffs;
-    private Tariff currentTariff = null;
-    private TariffsEnum currentEnum = null;
-    private EnumSet<TariffsEnum> set;
+    private Tariff currentTariff;
+    private TariffsEnum currentEnum;
 
     private final static Logger LOGGER = Logger.getLogger(TariffsHandler.class);
 
     public TariffsHandler() {
         tariffs = new ArrayList<>();
-        set = EnumSet.range(TariffsEnum.NAME, TariffsEnum.DISCOUNTPERCENT);
     }
 
     public List<Tariff> getTariffs() {
@@ -37,47 +37,25 @@ public class TariffsHandler extends DefaultHandler {
 
     @Override
     public void startDocument() {
-        LOGGER.info("Parsing started.");
+        LOGGER.info(START_MESSAGE);
     }
 
     @Override
     public void endDocument() {
-        LOGGER.info("Parsing ended.");
+        LOGGER.info(FINISH_MESSAGE);
     }
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) {
         if (STUDENT_TARIFF.equals(localName) || PENSIONER_TARIFF.equals(localName)) {
-            createTariff(localName, attributes);
+            initializeTariffFields(localName, attributes);
+        }else if(localName.equals(PARAMETERS)){
+            if(attributes.getLength()!=0) {
+                setTariffication(attributes);
+            }
         } else {
             setTariffFields(localName);
         }
-    }
-
-    private void setTariffFields(String localName) {
-        String name = localName;
-        if (localName.contains("-")) {
-            name = editString(localName);
-        }
-        TariffsEnum temp = TariffsEnum.valueOf(name.toUpperCase());
-        if (set.contains(temp)) {
-            currentEnum = temp;
-        }
-    }
-
-    private void createTariff(String localName, Attributes attributes) {
-        currentTariff = TariffFactory.create(localName);
-        String operator = attributes.getValue(0);
-        currentTariff.setOperator(Operator.valueOf(operator));
-        if (attributes.getLength() == 2) {
-            ((StudentTariff) currentTariff).createLogin();
-            ((StudentTariff) currentTariff).getLogin().setLogin(attributes.getValue(1));
-        }
-    }
-
-    private String editString(String string) {
-        string = string.replaceAll(REGEX, "");
-        return string;
     }
 
     @Override
@@ -134,13 +112,54 @@ public class TariffsHandler extends DefaultHandler {
                     ((PensionerTariff) currentTariff).setDiscountPercent(discount);
                     break;
                 default:
-                    try {
-                        throw new ParserException(EXCEPTION_MESSAGE);
-                    } catch (ParserException e) {
-                        LOGGER.error(EXCEPTION_MESSAGE, e);
-                    }
+                    break;
             }
         }
         currentEnum = null;
     }
+
+    private void setTariffFields(String localName) {
+        String name = localName;
+        if (localName.contains(DASH)) {
+            name = editString(localName);
+        }
+        currentEnum = TariffsEnum.valueOf(name.toUpperCase());
+    }
+
+
+    private Tariff create(String type){
+        switch (type){
+            case STUDENT_TARIFF:
+                return new StudentTariff();
+            case PENSIONER_TARIFF:
+                return new PensionerTariff();
+            default:
+                return new Tariff();
+        }
+    }
+
+    private void initializeTariffFields(String localName, Attributes attributes) {
+        currentTariff = create(localName);
+        String operator = attributes.getValue(0);
+        currentTariff.setOperator(Operator.valueOf(operator));
+        if (attributes.getLength() == 2) {
+            ((StudentTariff) currentTariff).createLogin();
+            String data = attributes.getValue(1);
+            Login login = ((StudentTariff) currentTariff).getLogin();
+            login.setLogin(data);
+        }
+    }
+
+    private String editString(String string) {
+        string = string.replaceAll(REGEX, EMPTY_STRING);
+        return string;
+    }
+
+    private void setTariffication(Attributes attributes) {
+        String tariffication = attributes.getValue(0);
+        if (tariffication.equals(Tariffication.ONEMINUTE.getValue())) {
+            currentTariff.getParameters().setTariffication(Tariffication.ONEMINUTE);
+        }
+    }
+
 }

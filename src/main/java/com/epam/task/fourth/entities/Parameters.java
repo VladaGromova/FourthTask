@@ -1,18 +1,22 @@
 package com.epam.task.fourth.entities;
 
-import com.epam.task.fourth.parsers.Parser;
+import com.epam.task.fourth.adapters.EnumAdapter;
+import com.epam.task.fourth.enums.Tariffication;
 
 import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.util.Objects;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Parameters", propOrder = {"numberOfFavourites", "payment", "tariffication"})
 public class Parameters {
-    @XmlElement(required = true)
+    @XmlElement(required = true, name = "number-of-favourites")
     private int numberOfFavourites;
     @XmlElement(required = true)
     private int payment;
-    @XmlAttribute
-    private Tariffication tariffication=Tariffication.TWELVESECONDS;
+    @XmlJavaTypeAdapter(EnumAdapter.class)
+    @XmlAttribute(name = "tariffication")
+    private Tariffication tariffication = Tariffication.TWELVESECONDS;
 
     public Parameters(int numberOfFavourites, int payment, Tariffication tariffication) {
         this.numberOfFavourites = numberOfFavourites;
@@ -37,6 +41,23 @@ public class Parameters {
 
     public void setTariffication(Tariffication tariffication) {
         this.tariffication = tariffication;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object){
+            return true;
+        }
+        if (object == null || getClass() != object.getClass()){
+            return false;
+        }
+        Parameters that = (Parameters) object;
+        return numberOfFavourites == that.numberOfFavourites && payment == that.payment && tariffication == that.tariffication;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(numberOfFavourites, payment, tariffication);
     }
 
     @Override

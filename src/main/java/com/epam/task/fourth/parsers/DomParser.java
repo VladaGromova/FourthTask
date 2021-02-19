@@ -1,6 +1,8 @@
 package com.epam.task.fourth.parsers;
 
-import com.epam.task.fourth.TariffsEnum;
+import com.epam.task.fourth.enums.Operator;
+import com.epam.task.fourth.enums.Tariffication;
+import com.epam.task.fourth.enums.TariffsEnum;
 import com.epam.task.fourth.entities.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -14,6 +16,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.log4j.Logger;
 
 public class DomParser implements Parser {
 
@@ -21,10 +24,33 @@ public class DomParser implements Parser {
     private final static String PENSIONER_TARIFF = "pensioner-tariff";
     private final static String STUDENT_TARIFF = "student-tariff";
     private List<Tariff> tariffs;
-    private final DocumentBuilder documentBuilder;
+    private DocumentBuilder documentBuilder;
 
-    public DomParser() throws ParserException {
+    private final static Logger LOGGER = Logger.getLogger(DomParser.class);
+
+    public DomParser(){
         this.tariffs = new ArrayList<>();
+        try {
+            initializeDocumentBuilder();
+        } catch (ParserException e) {
+            LOGGER.error(EXCEPTION_MESSAGE, e);
+        }
+    }
+
+    public List<Tariff> parse(String filename) throws ParserException {
+        Document document;
+        try {
+            document = documentBuilder.parse(filename);
+            Element root = document.getDocumentElement();
+            process(root, PENSIONER_TARIFF);
+            process(root, STUDENT_TARIFF);
+        } catch (SAXException | IOException e) {
+            throw new ParserException(EXCEPTION_MESSAGE, e);
+        }
+        return tariffs;
+    }
+
+    private void initializeDocumentBuilder() throws ParserException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         try {
             documentBuilder = factory.newDocumentBuilder();
@@ -37,20 +63,31 @@ public class DomParser implements Parser {
         NodeList tariffsList = root.getElementsByTagName(tariffType);
         for (int i = 0; i < tariffsList.getLength(); ++i) {
             Element tariffElement = (Element) tariffsList.item(i);
-            Tariff tariff = createTariff(tariffElement, tariffType);
+            Tariff tariff = initializeTariffFields(tariffElement, tariffType);
             tariffs.add(tariff);
         }
     }
 
-    private int getInfo(Element tariffElement, TariffsEnum TYPE){
-        String name = TYPE.getValue();
+    private int getInfo(Element tariffElement, TariffsEnum type){
+        String name = type.getValue();
         String elementName = getElementTextContent(tariffElement, name);
         return Integer.parseInt(elementName);
     }
 
-    private Tariff createTariff(Element tariffElement, String tariffType) {
+    private Tariff create(String type){
+        switch (type){
+            case STUDENT_TARIFF:
+                return new StudentTariff();
+            case PENSIONER_TARIFF:
+                return new PensionerTariff();
+            default:
+                return new Tariff();
+        }
+    }
 
-        Tariff tariff = TariffFactory.create(tariffType);
+    private Tariff initializeTariffFields(Element tariffElement, String tariffType) {
+
+        Tariff tariff = create(tariffType);
 
         String attributeName = TariffsEnum.OPERATORNAME.getValue();
         String operator = tariffElement.getAttribute(attributeName);
@@ -71,20 +108,16 @@ public class DomParser implements Parser {
 
         int smsPrice = getInfo(tariffElement, TariffsEnum.SMSPRICE);
         tariff.setSmsPrice(smsPrice);
-
         if (tariffType.equals(PENSIONER_TARIFF)) {
             int discount = getInfo(tariffElement, TariffsEnum.DISCOUNTPERCENT);
             ((PensionerTariff) tariff).setDiscountPercent(discount);
         }
+        initializeCallPrices(tariff, tariffElement);
+        initializeParameters(tariff, tariffElement);
+        return tariff;
+    }
 
-        Element callPricesElement = (Element) tariffElement.getElementsByTagName(TariffsEnum.CALLPRICES.getValue()).item(0);
-
-        int inNetwork = getInfo(callPricesElement, TariffsEnum.INNETWORK);
-        int outNetwork = getInfo(callPricesElement, TariffsEnum.OUTNETWORK);
-        int stationary = getInfo(callPricesElement, TariffsEnum.STATIONARY);
-        CallPrices callPrices = new CallPrices(inNetwork, outNetwork, stationary);
-        tariff.setCallPrices(callPrices);
-
+    private void initializeParameters(Tariff tariff, Element tariffElement){
         Element parametersElement = (Element) tariffElement.getElementsByTagName(TariffsEnum.PARAMETERS.getValue()).item(0);
         int numberOfFavourites = getInfo(parametersElement, TariffsEnum.NUMBEROFFAVOURITES);
         int payment = getInfo(parametersElement, TariffsEnum.PAYMENT);
@@ -92,25 +125,25 @@ public class DomParser implements Parser {
 
         tariff.setParameters(parameters);
 
-        return tariff;
+        String attributeName = TariffsEnum.TARIFFICATION.getValue();
+        String tariffication = parametersElement.getAttribute(attributeName);
+        if(tariffication.equals(Tariffication.ONEMINUTE.getValue())){
+            tariff.getParameters().setTariffication(Tariffication.ONEMINUTE);
+        }
+    }
+
+    private void initializeCallPrices(Tariff tariff, Element tariffElement){
+        Element callPricesElement = (Element) tariffElement.getElementsByTagName(TariffsEnum.CALLPRICES.getValue()).item(0);
+        int inNetwork = getInfo(callPricesElement, TariffsEnum.INNETWORK);
+        int outNetwork = getInfo(callPricesElement, TariffsEnum.OUTNETWORK);
+        int stationary = getInfo(callPricesElement, TariffsEnum.STATIONARY);
+        CallPrices callPrices = new CallPrices(inNetwork, outNetwork, stationary);
+        tariff.setCallPrices(callPrices);
     }
 
     private String getElementTextContent(Element element, String elementName) {
         NodeList nodeList = element.getElementsByTagName(elementName);
         Node node = nodeList.item(0);
         return node.getTextContent();
-    }
-
-    public List<Tariff> parse(String filename) throws ParserException {
-        Document document;
-        try {
-            document = documentBuilder.parse(filename);
-            Element root = document.getDocumentElement();
-            process(root, PENSIONER_TARIFF);
-            process(root, STUDENT_TARIFF);
-        } catch (SAXException | IOException e) {
-            throw new ParserException(EXCEPTION_MESSAGE, e);
-        }
-        return tariffs;
     }
 }
